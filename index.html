@@ -2,7 +2,6 @@
 <html lang="ko">
 
 <head>
-  <meta http-equiv="refresh" content="3; URL=/v1" />
   <title>Redirecting...</title>
 </head>
 
@@ -10,9 +9,21 @@
   <a href="/v1">/v1</a>
   <a href="/piping-ui-web">/piping-ui-web</a>
 
+  <script src="https://unpkg.com/juris@0.9.0/juris.js"></script>
   <script src="/run.livescript.js">
-    console.log 'hello livescript!'
+    fetch "https://api.github.com/users/naratteu/repos?sort=pushed" .then ->>
+      arr = await it.json!
+      new Juris {
+        layout: App: {}
+        components: App: ->
+          render: -> ul: children:
+            arr
+              .filter -> it.has_pages
+              .map ({ name: text }) -> li: children:
+                * a: { href: '/' + text, text }
+      } .render '#juris'
   </script>
+  <div id="juris"></div>
 </body>
 
 </html>
